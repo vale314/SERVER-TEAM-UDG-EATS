@@ -1,0 +1,9 @@
+{
+  "jwtSecret": "secret",
+  "CONFIG": {
+    "host": "localhost",
+    "user": "usuario1",
+    "password": "cucei",
+    "database": "UDGTEAM"
+  }
+}
