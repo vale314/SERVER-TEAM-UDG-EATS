@@ -27,10 +27,10 @@ router.get("/", auth, async (req, res) => {
 // @desc      Auth user & get token Validate Login
 // @access    Public
 router.post(
-  "/",
+  "/user-login",
   [
     check("email", "Please include a valid email").isEmail(),
-    check("password", "Password is required").exists(),
+    check("user_password", "Password is required").isLength({ min: 6 }),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -38,42 +38,55 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { email, password } = req.body;
+    const { email, user_password } = req.body;
 
-    try {
-      let user = await User.findOne({ email });
-
-      if (!user) {
-        return res.status(400).json({ msg: "Invalid Credentials" });
-      }
-
-      const isMatch = await bcrypt.compare(password, user.password);
-
-      if (!isMatch) {
-        return res.status(400).json({ msg: "Invalid Credentials" });
-      }
-
-      const payload = {
-        user: {
-          id: user.id,
-        },
-      };
-
-      jwt.sign(
-        payload,
-        config.get("jwtSecret"),
-        {
-          expiresIn: 360000,
-        },
-        (err, token) => {
-          if (err) throw err;
-          res.json({ token });
+    new Promise(function (resolve, reject) {
+      connection.query(
+        "SELECT * FROM `users` WHERE `email` = ?",
+        email,
+        function (err, results, fields) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(results);
+          }
         }
       );
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send("Server Error");
-    }
+    })
+      .then(async (user) => {
+        if (user.length === 0) {
+          return res.json({ msg: "Credenciales Incorrectas" });
+        }
+        const isMatch = await bcrypt.compare(
+          user_password,
+          user[0].user_password
+        );
+        if (!isMatch) {
+          return res.status(400).json({ msg: "Credenciales Incorrectas" });
+        }
+        const payload = {
+          user: {
+            id: email,
+          },
+        };
+
+        jwt.sign(
+          payload,
+          config.get("jwtSecret"),
+          {
+            expiresIn: 360000,
+          },
+          (err, token) => {
+            if (err) throw err;
+            return res.json({ token });
+          }
+        );
+      })
+      .catch((err) => {
+        if (err) {
+          return res.json({ err: "ERROR: " });
+        }
+      });
   }
 );
 
@@ -121,7 +134,7 @@ router.post(
       image,
     };
 
-    const userInsert = new Promise(function (resolve, reject) {
+    new Promise(function (resolve, reject) {
       connection.query("INSERT INTO USERS SET ?", user, function (
         err,
         results,
