@@ -35,7 +35,9 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res
+        .status(400)
+        .json({ error: true, msg: "Campos Invalidos", errors: errors.array() });
     }
 
     const { email, user_password } = req.body;
@@ -55,14 +57,16 @@ router.post(
     })
       .then(async (user) => {
         if (user.length === 0) {
-          return res.json({ msg: "Credenciales Incorrectas" });
+          return res.json({ error: true, msg: "Credenciales Incorrectas" });
         }
         const isMatch = await bcrypt.compare(
           user_password,
           user[0].user_password
         );
         if (!isMatch) {
-          return res.status(400).json({ msg: "Credenciales Incorrectas" });
+          return res
+            .status(400)
+            .json({ error: true, msg: "Credenciales Incorrectas" });
         }
         const payload = {
           user: {
@@ -78,13 +82,13 @@ router.post(
           },
           (err, token) => {
             if (err) throw err;
-            return res.json({ token });
+            return res.json({ error: false, token, expires: 36000 });
           }
         );
       })
       .catch((err) => {
         if (err) {
-          return res.json({ err: "ERROR: " });
+          return res.json({ error: true, msg: "ERROR: " });
         }
       });
   }
@@ -109,7 +113,9 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res
+        .status(400)
+        .json({ error: true, msg: "Campos Invalidos", errors: errors.array() });
     }
 
     const {
@@ -162,15 +168,15 @@ router.post(
           },
           (err, token) => {
             if (err) throw err;
-            return res.json({ token });
+            return res.json({ error: false, token, expires: 36000 });
           }
         );
       })
       .catch((err) => {
         if (err) {
           if (err.code == "ER_DUP_ENTRY")
-            return res.json({ err: "Email Ya Existe" });
-          return res.json({ err: "No se puede registrar" });
+            return res.json({ error: true, msg: "Email Ya Existe" });
+          return res.json({ error: true, msg: "No se puede registrar" });
         }
       });
   }
