@@ -225,7 +225,17 @@ router.post(
       ingredients,
       lactoseFree,
       vegan,
+      desayuno,
+      comida,
+      snack,
+      lonche,
+      sandiwch,
+      taco,
+      pan,
+      dulce,
     } = req.body;
+
+    console.log();
 
     const user = {
       title,
@@ -240,6 +250,14 @@ router.post(
       glutenFree,
       lactoseFree,
       vegan,
+      desayuno,
+      comida,
+      snack,
+      lonche,
+      sandiwch,
+      taco,
+      pan,
+      dulce,
     };
 
     new Promise(function (resolve, reject) {
@@ -271,6 +289,14 @@ router.post(
             ProductGlutenFree: glutenFree,
             ProductLactosaFree: lactoseFree,
             ProductVegan: vegan,
+            ProductDesayuno: desayuno,
+            ProductComida: comida,
+            ProductSnack: snack,
+            ProductLoche: lonche,
+            ProductSandiwch: sandiwch,
+            ProductTaco: taco,
+            ProductPan: pan,
+            ProductDulce: dulce,
           },
         });
       })
