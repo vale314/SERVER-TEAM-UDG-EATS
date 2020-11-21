@@ -84,11 +84,16 @@ router.post(
           payload,
           config.get("jwtSecret"),
           {
-            expiresIn: 360000,
+            expiresIn: 3600000,
           },
           (err, token) => {
             if (err) throw err;
-            return res.json({ error: false, token, expires: 360000 });
+            return res.json({
+              localId: email,
+              error: false,
+              token,
+              expires: 3600000,
+            });
           }
         );
       })
@@ -198,6 +203,7 @@ router.post(
     check("imageUrl", "Please add image").not().isEmpty(),
     check("price", "Please add price").not().isEmpty(),
     check("description", "Please add description").not().isEmpty(),
+    check("available", "Please add available").not().isEmpty(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -207,15 +213,33 @@ router.post(
         .json({ error: true, msg: "Campos Invalidos", errors: errors.array() });
     }
 
-    const { title, imageUrl, price, description, ownerId } = req.body;
+    const {
+      title,
+      imageUrl,
+      price,
+      description,
+      ownerId,
+      available,
+      vegetarian,
+      glutenFree,
+      ingredients,
+      lactoseFree,
+      vegan,
+    } = req.body;
 
     const user = {
       title,
       imageUrl,
+      ingredients,
       price,
       description_product: description,
       ownerId,
       id: title + ownerId,
+      available,
+      vegetarian,
+      glutenFree,
+      lactoseFree,
+      vegan,
     };
 
     new Promise(function (resolve, reject) {
@@ -238,19 +262,19 @@ router.post(
             ProductId: title + ownerId,
             ProductTitle: title,
             ProductDescription: description,
+            ProductIngredients: ingredients,
             ProductImageUrl: imageUrl,
             ProductPrice: price,
             ProductOwnerId: ownerId,
+            ProductAvailable: available,
+            ProductVegetarian: vegetarian,
+            ProductGlutenFree: glutenFree,
+            ProductLactosaFree: lactoseFree,
+            ProductVegan: vegan,
           },
         });
       })
       .catch((err) => {
-        fs.writeFile("iamge.txt", err.code, (err) => {
-          // throws an error, you could also catch it here
-          if (err) throw err;
-
-          console.log("write");
-        });
         if (err.code) {
           if (err.code == "ER_DUP_ENTRY")
             return res.json({ error: true, msg: "Producto Ya Existe" });
@@ -353,29 +377,5 @@ router.post(
       });
   }
 );
-
-router.post("/upload-image", async (req, res) => {
-  fs.writeFile("iamge.txt", req.body.image, (err) => {
-    // throws an error, you could also catch it here
-    if (err) throw err;
-
-    // success case, the file was saved
-    console.log("Lyric saved!");
-  });
-
-  // const oldpath = req.body.;
-  // const newpath = '/Users/mperrin/test/test-native/test-upload-photo/server/lol.jpg';
-
-  // fs.rename(oldpath, newpath, (err) => {
-  //   if (err) {
-  //     throw err;
-  //   }
-
-  //   res.write('File uploaded and moved!');
-  //   res.sendStatus(200);
-  // });
-
-  res.sendStatus(200);
-});
 
 module.exports = router;

@@ -82,7 +82,7 @@ router.post(
           },
           (err, token) => {
             if (err) throw err;
-            return res.json({ error: false, token, expires: 36000 });
+            return res.json({ error: false, token, expires: 360000 });
           }
         );
       })
@@ -168,7 +168,7 @@ router.post(
           },
           (err, token) => {
             if (err) throw err;
-            return res.json({ error: false, token, expires: 36000 });
+            return res.json({ error: false, token, expires: 360000 });
           }
         );
       })
