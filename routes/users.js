@@ -4,9 +4,12 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const config = require("config");
 const { check, validationResult } = require("express-validator");
-const auth = require("../middleware/auth");
+const mysql = require("mysql");
+
+const connection = mysql.createConnection(config.get("CONFIG"));
 
 const User = require("../models/User");
+const auth = require("../middleware/auth");
 
 // @route     GET admin/admins
 // @desc      Obtener Todos Users
@@ -103,6 +106,195 @@ router.post(
       console.error(err.message);
       res.status(500).send("Server Error");
     }
+  }
+);
+
+// @route     POST api/users
+// @desc      Regiter a user
+// @access    Public
+router.post("/products", async (req, res) => {
+  new Promise(function (resolve, reject) {
+    connection.query(
+      "SELECT * FROM `PRODUCT`",
+      function (err, results, fields) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      }
+    );
+  })
+    .then((resul) => {
+      return res.json({
+        error: false,
+        products: resul,
+      });
+    })
+    .catch((err) => {
+      if (err) {
+        return res.json({ error: true, msg: "No se puede Enviar Productos" });
+      }
+    });
+});
+
+// @route     POST api/users
+// @desc      Regiter a user
+// @access    Public
+router.post(
+  "/buy-products",
+  [
+    check("id", "Please add id").not().isEmpty(),
+    check("email", "Please include a valid email").isEmail(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { id, email } = req.body;
+
+    const formatDate = (date) => {
+      const map = {
+        ss: date.getSeconds(),
+        mm: date.getUTCMinutes(),
+        hh: date.getHours(),
+        mo: date.getMonth() + 1,
+        dd: date.getDate(),
+        yy: date.getFullYear().toString().slice(-2),
+        yyyy: date.getFullYear(),
+      };
+
+      return map;
+    };
+
+    new Promise(function (resolve, reject) {
+      connection.query(
+        "SELECT * FROM `product` WHERE `id` = ?",
+        id,
+        function (err, results, fields) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(results);
+          }
+        }
+      );
+    })
+      .then(async (product) => {
+        if (product.length === 0) {
+          return res.json({ error: true, msg: "Producto NO ENCONTRADO" });
+        }
+        const ownerid = product[0].ownerid;
+
+        const date = formatDate(new Date());
+
+        const idBuy =
+          email +
+          date.mm.toString() +
+          date.hh.toString() +
+          date.dd.toString() +
+          date.mo.toString() +
+          date.yy.toString();
+
+        const fecha =
+          date.ss.toString() +
+          "-" +
+          date.mm.toString() +
+          "-" +
+          date.hh.toString() +
+          "-" +
+          date.dd.toString() +
+          "-" +
+          date.mo.toString() +
+          "-" +
+          date.yy.toString();
+
+        const buyProduct = {
+          idProduct: id,
+          email,
+          ownerid,
+          idBuy,
+          fecha,
+        };
+        new Promise(function (resolve, reject) {
+          connection.query(
+            "INSERT INTO BUY SET ?",
+            buyProduct,
+            function (err, results, fields) {
+              if (err) {
+                reject(err);
+              } else {
+                resolve();
+              }
+            }
+          );
+        })
+
+          .then(() => {
+            return res.json({
+              error: false,
+            });
+          })
+          .catch((err) => {
+            if (err) {
+              if (err.code == "ER_DUP_ENTRY")
+                return res.json({
+                  error: true,
+                  msg: "Date un respiro, espera tu producto",
+                });
+              return res.json({ error: true, msg: "No se puede registrar" });
+            }
+          });
+      })
+      .catch((err) => {
+        if (err) {
+          return res.json({ error: true, msg: "ERROR: " });
+        }
+      });
+  }
+);
+
+// @route     POST api/users
+// @desc      Regiter a user
+// @access    Public
+router.post(
+  "/buy",
+  [check("email", "Please include a valid email").isEmail()],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: true, errors: errors.array() });
+    }
+
+    const { email } = req.body;
+
+    new Promise(function (resolve, reject) {
+      connection.query(
+        "SELECT * FROM `BUY` JOIN `PRODUCT` ON PRODUCT.ID = BUY.IDPRODUCT and BUY.isbuy = 1 and BUY.EMAIL =  ?",
+        email,
+        function (err, results, fields) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(results);
+          }
+        }
+      );
+    })
+      .then((resul) => {
+        return res.json({
+          error: false,
+          buys: resul,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err) {
+          return res.json({ error: true, msg: "No se puede Enviar Productos" });
+        }
+      });
   }
 );
 

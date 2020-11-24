@@ -152,17 +152,17 @@ router.post(
     };
 
     new Promise(function (resolve, reject) {
-      connection.query("INSERT INTO SELLER SET ?", user, function (
-        err,
-        results,
-        fields
-      ) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
+      connection.query(
+        "INSERT INTO SELLER SET ?",
+        user,
+        function (err, results, fields) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
         }
-      });
+      );
     })
       .then(() => {
         const payload = {
@@ -235,8 +235,6 @@ router.post(
       dulce,
     } = req.body;
 
-    console.log();
-
     const user = {
       title,
       imageUrl,
@@ -261,17 +259,17 @@ router.post(
     };
 
     new Promise(function (resolve, reject) {
-      connection.query("INSERT INTO PRODUCT SET ?", user, function (
-        err,
-        results,
-        fields
-      ) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(results);
+      connection.query(
+        "INSERT INTO PRODUCT SET ?",
+        user,
+        function (err, results, fields) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(results);
+          }
         }
-      });
+      );
     })
       .then((resul) => {
         return res.json({
@@ -395,6 +393,132 @@ router.post(
       })
       .catch((err) => {
         console.log(err);
+        if (err) {
+          if (err.code == "ER_DUP_ENTRY")
+            return res.json({ error: true, msg: "Producto Ya Existe" });
+          return res.json({ error: true, msg: "No se puede registrar" });
+        }
+      });
+  }
+);
+
+// @route     POST api/users
+// @desc      Regiter a user
+// @access    Public
+router.post(
+  "/buy",
+  [check("email", "Please include a valid email").isEmail()],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: true, errors: errors.array() });
+    }
+
+    const { email } = req.body;
+
+    new Promise(function (resolve, reject) {
+      connection.query(
+        "SELECT * FROM `BUY` JOIN `PRODUCT` ON PRODUCT.ID = BUY.IDPRODUCT and BUY.isbuy = 0 and BUY.OWNERID =  ? JOIN `USERS` ON USERS.email = BUY.email ",
+        email,
+        function (err, results, fields) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(results);
+          }
+        }
+      );
+    })
+      .then((resul) => {
+        return res.json({
+          error: false,
+          buys: resul,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err) {
+          return res.json({ error: true, msg: "No se puede Enviar Productos" });
+        }
+      });
+  }
+);
+
+// @route     POST api/users
+// @desc      Regiter a user
+// @access    Public
+router.post(
+  "/confirm",
+  [check("idBuy", "Please include a valid email").not().isEmpty()],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: true, errors: errors.array() });
+    }
+
+    const { idBuy } = req.body;
+
+    new Promise(function (resolve, reject) {
+      connection.query(
+        "UPDATE `BUY` SET buy.ISBUY = 1 WHERE IDBUY = ?",
+        idBuy,
+        function (err, results, fields) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        }
+      );
+    })
+      .then(() => {
+        return res.json({
+          error: false,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err) {
+          return res.json({ error: true, msg: "No se puede Enviar Productos" });
+        }
+      });
+  }
+);
+
+// @route     POST api/users
+// @desc      Regiter a user
+// @access    Public
+router.post(
+  "/orders",
+  [check("email", "Please include a valid email").not().isEmpty()],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: true, errors: errors.array() });
+    }
+
+    const { email } = req.body;
+
+    new Promise(function (resolve, reject) {
+      connection.query(
+        "SELECT * FROM `BUY` JOIN `PRODUCT` ON PRODUCT.ID = BUY.IDPRODUCT and BUY.isbuy = 1 and BUY.OWNERID =  ? JOIN `USERS` ON USERS.email = BUY.email ",
+        [email],
+        function (err, results, fields) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(results);
+          }
+        }
+      );
+    })
+      .then((resul) => {
+        return res.json({
+          error: false,
+          orders: resul,
+        });
+      })
+      .catch((err) => {
         if (err) {
           if (err.code == "ER_DUP_ENTRY")
             return res.json({ error: true, msg: "Producto Ya Existe" });
