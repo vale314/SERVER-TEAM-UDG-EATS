@@ -44,7 +44,7 @@ router.post(
 
     new Promise(function (resolve, reject) {
       connection.query(
-        "SELECT * FROM `users` WHERE `email` = ?",
+        "SELECT * FROM `USERS` WHERE `email` = ?",
         email,
         function (err, results, fields) {
           if (err) {

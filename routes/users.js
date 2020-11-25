@@ -171,7 +171,7 @@ router.post(
 
     new Promise(function (resolve, reject) {
       connection.query(
-        "SELECT * FROM `product` WHERE `id` = ?",
+        "SELECT * FROM `PRODUCT` WHERE `id` = ?",
         id,
         function (err, results, fields) {
           if (err) {
