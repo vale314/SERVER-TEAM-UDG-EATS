@@ -39,7 +39,6 @@ router.post(
     check("user_password", "Password is required").isLength({ min: 6 }),
   ],
   async (req, res) => {
-    console.log(email, user_password);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res
@@ -63,6 +62,7 @@ router.post(
       );
     })
       .then(async (user) => {
+        console.log(user);
         if (user.length === 0) {
           return res.json({ error: true, msg: "Credenciales Incorrectas" });
         }
