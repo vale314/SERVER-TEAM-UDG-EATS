@@ -181,6 +181,7 @@ router.post(
       })
       .catch((err) => {
         if (err) {
+          console.log(err);
           if (err.code == "ER_DUP_ENTRY")
             return res.json({ error: true, msg: "Email Ya Existe" });
           return res.json({ error: true, msg: "No se puede registrar" });
