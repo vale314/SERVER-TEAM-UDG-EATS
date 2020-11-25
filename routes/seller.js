@@ -62,7 +62,7 @@ router.post(
       );
     })
       .then(async (user) => {
-        connectDB.end();
+        connection.end();
         if (user.length === 0) {
           return res.json({ error: true, msg: "Credenciales Incorrectas" });
         }
@@ -100,7 +100,7 @@ router.post(
       })
       .catch((err) => {
         if (err) {
-          connectDB.end();
+          connection.end();
           return res.json({ error: true, msg: "ERROR: " });
         }
       });
@@ -274,7 +274,7 @@ router.post(
       );
     })
       .then((resul) => {
-        connectDB.end();
+        connection.end();
         return res.json({
           error: false,
           product: {
@@ -302,7 +302,7 @@ router.post(
         });
       })
       .catch((err) => {
-        connectDB.end();
+        connection.end();
         if (err.code) {
           if (err.code == "ER_DUP_ENTRY")
             return res.json({ error: true, msg: "Producto Ya Existe" });
@@ -342,12 +342,14 @@ router.post(
       );
     })
       .then((resul) => {
+        connection.end();
         return res.json({
           error: false,
           products: resul,
         });
       })
       .catch((err) => {
+        connection.end();
         if (err) {
           if (err.code == "ER_DUP_ENTRY")
             return res.json({ error: true, msg: "Producto Ya Existe" });
