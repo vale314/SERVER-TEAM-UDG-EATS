@@ -175,7 +175,12 @@ router.post(
           },
           (err, token) => {
             if (err) throw err;
-            return res.json({ error: false, token, expires: 360000 });
+            return res.json({
+              error: false,
+              token,
+              localId: email,
+              expires: 360000,
+            });
           }
         );
       })
