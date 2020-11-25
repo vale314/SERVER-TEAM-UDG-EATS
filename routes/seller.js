@@ -62,7 +62,7 @@ router.post(
       );
     })
       .then(async (user) => {
-        console.log(user);
+        connectDB.end();
         if (user.length === 0) {
           return res.json({ error: true, msg: "Credenciales Incorrectas" });
         }
@@ -100,6 +100,7 @@ router.post(
       })
       .catch((err) => {
         if (err) {
+          connectDB.end();
           return res.json({ error: true, msg: "ERROR: " });
         }
       });
@@ -273,6 +274,7 @@ router.post(
       );
     })
       .then((resul) => {
+        connectDB.end();
         return res.json({
           error: false,
           product: {
@@ -300,6 +302,7 @@ router.post(
         });
       })
       .catch((err) => {
+        connectDB.end();
         if (err.code) {
           if (err.code == "ER_DUP_ENTRY")
             return res.json({ error: true, msg: "Producto Ya Existe" });
