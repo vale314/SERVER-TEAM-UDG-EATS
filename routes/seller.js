@@ -6,13 +6,7 @@ const config = require("config");
 const auth = require("../middleware/auth");
 const { check, validationResult } = require("express-validator");
 const mysql = require("mysql");
-const connection = mysql.createConnection(config.get("CONFIG"));
-const multer = require("multer");
-const fs = require("fs");
-
-const upload = multer({
-  dest: "upload/",
-});
+const connection = mysql.createPool(config.get("CONFIG"));
 
 const User = require("../models/User");
 
@@ -62,7 +56,7 @@ router.post(
       );
     })
       .then(async (user) => {
-        connection.end();
+        // connection.end();
         if (user.length === 0) {
           return res.json({ error: true, msg: "Credenciales Incorrectas" });
         }
@@ -100,7 +94,7 @@ router.post(
       })
       .catch((err) => {
         if (err) {
-          connection.end();
+          // connection.end();
           return res.json({ error: true, msg: "ERROR: " });
         }
       });
@@ -274,7 +268,7 @@ router.post(
       );
     })
       .then((resul) => {
-        connection.end();
+        // connection.end();
         return res.json({
           error: false,
           product: {
@@ -302,7 +296,7 @@ router.post(
         });
       })
       .catch((err) => {
-        connection.end();
+        // connection.end();
         if (err.code) {
           if (err.code == "ER_DUP_ENTRY")
             return res.json({ error: true, msg: "Producto Ya Existe" });
@@ -342,14 +336,14 @@ router.post(
       );
     })
       .then((resul) => {
-        connection.end();
+        // connection.end();
         return res.json({
           error: false,
           products: resul,
         });
       })
       .catch((err) => {
-        connection.end();
+        // connection.end();
         if (err) {
           if (err.code == "ER_DUP_ENTRY")
             return res.json({ error: true, msg: "Producto Ya Existe" });

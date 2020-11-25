@@ -6,7 +6,7 @@ const config = require("config");
 const { check, validationResult } = require("express-validator");
 const mysql = require("mysql");
 
-const connection = mysql.createConnection(config.get("CONFIG"));
+const connection = mysql.createPool(config.get("CONFIG"));
 
 const User = require("../models/User");
 const auth = require("../middleware/auth");

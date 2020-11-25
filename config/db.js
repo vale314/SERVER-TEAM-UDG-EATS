@@ -12,7 +12,10 @@ const connection = () =>
     }
   });
 
+const pool = mysql.createPool(config.get("CONFIG"));
+
 module.exports = {
   connectDB: connectDB,
   connection: connection,
+  pool: pool,
 };

@@ -6,7 +6,7 @@ const config = require("config");
 const auth = require("../middleware/auth");
 const { check, validationResult } = require("express-validator");
 const mysql = require("mysql");
-const connection = mysql.createConnection(config.get("CONFIG"));
+const connection = mysql.createPool(config.get("CONFIG"));
 
 const User = require("../models/User");
 
@@ -141,17 +141,17 @@ router.post(
     };
 
     new Promise(function (resolve, reject) {
-      connection.query("INSERT INTO USERS SET ?", user, function (
-        err,
-        results,
-        fields
-      ) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
+      connection.query(
+        "INSERT INTO USERS SET ?",
+        user,
+        function (err, results, fields) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
         }
-      });
+      );
     })
       .then(() => {
         const payload = {
