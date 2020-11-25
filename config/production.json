@@ -1,9 +1,9 @@
 {
   "jwtSecret": "secret",
   "CONFIG": {
-    "host": "localhost",
-    "user": "usuario1",
-    "password": "cucei",
-    "database": "UDGTEAM"
+    "host": "us-cdbr-east-02.cleardb.com",
+    "user": "bc3021908a1e41",
+    "password": "0a3e89e6",
+    "database": "heroku_bf1348bc061472f"
   }
 }
