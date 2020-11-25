@@ -233,16 +233,16 @@ router.post(
 
     const user = {
       title,
-      imageUrl,
+      imageurl: imageUrl,
       ingredients,
       price,
       description_product: description,
-      ownerId,
+      ownerid: ownerId,
       id: title + ownerId,
       available,
       vegetarian,
-      glutenFree,
-      lactoseFree,
+      glutenfree: glutenFree,
+      lactosefree: lactoseFree,
       vegan,
       desayuno,
       comida,
@@ -324,7 +324,7 @@ router.post(
 
     new Promise(function (resolve, reject) {
       connection.query(
-        "SELECT * FROM `PRODUCT` WHERE `OWNERID` =  ?",
+        "SELECT * FROM `PRODUCT` WHERE `ownerid` =  ?",
         [email],
         function (err, results, fields) {
           if (err) {
@@ -418,7 +418,7 @@ router.post(
 
     new Promise(function (resolve, reject) {
       connection.query(
-        "SELECT * FROM `BUY` JOIN `PRODUCT` ON PRODUCT.ID = BUY.IDPRODUCT and BUY.isbuy = 0 and BUY.OWNERID =  ? JOIN `USERS` ON USERS.email = BUY.email ",
+        "SELECT * FROM `BUY` JOIN `PRODUCT` ON PRODUCT.id = BUY.idproduct and BUY.isbuy = 0 and BUY.ownerid =  ? JOIN `USERS` ON USERS.email = BUY.email ",
         email,
         function (err, results, fields) {
           if (err) {
@@ -460,7 +460,7 @@ router.post(
 
     new Promise(function (resolve, reject) {
       connection.query(
-        "UPDATE `BUY` SET buy.ISBUY = 1 WHERE IDBUY = ?",
+        "UPDATE `BUY` SET BUY.isbuy = 1 WHERE idbuy = ?",
         idBuy,
         function (err, results, fields) {
           if (err) {
@@ -501,7 +501,7 @@ router.post(
 
     new Promise(function (resolve, reject) {
       connection.query(
-        "SELECT * FROM `BUY` JOIN `PRODUCT` ON PRODUCT.ID = BUY.IDPRODUCT and BUY.isbuy = 1 and BUY.OWNERID =  ? JOIN `USERS` ON USERS.email = BUY.email ",
+        "SELECT * FROM `BUY` JOIN `PRODUCT` ON PRODUCT.id = BUY.idproduct and BUY.isbuy = 1 and BUY.ownerid =  ? JOIN `USERS` ON USERS.email = BUY.email ",
         [email],
         function (err, results, fields) {
           if (err) {

@@ -211,17 +211,17 @@ router.post(
           "-" +
           date.yy.toString();
 
-        const buyProduct = {
-          idProduct: id,
+        const buyproduct = {
+          idproduct: id,
           email,
-          ownerid,
-          idBuy,
+          ownerid: ownerid,
+          idbuy: idBuy,
           fecha,
         };
         new Promise(function (resolve, reject) {
           connection.query(
             "INSERT INTO BUY SET ?",
-            buyProduct,
+            buyproduct,
             function (err, results, fields) {
               if (err) {
                 reject(err);
@@ -272,7 +272,7 @@ router.post(
 
     new Promise(function (resolve, reject) {
       connection.query(
-        "SELECT * FROM `BUY` JOIN `PRODUCT` ON PRODUCT.ID = BUY.IDPRODUCT and BUY.isbuy = 1 and BUY.EMAIL =  ?",
+        "SELECT * FROM `BUY` JOIN `PRODUCT` ON PRODUCT.id = BUY.idproduct and BUY.isbuy = 1 and BUY.email =  ?",
         email,
         function (err, results, fields) {
           if (err) {
