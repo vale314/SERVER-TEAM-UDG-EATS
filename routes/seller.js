@@ -296,7 +296,7 @@ router.post(
         });
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.code);
         if (err.code) {
           if (err.code == "ER_DUP_ENTRY")
             return res.json({ error: true, msg: "Producto Ya Existe" });
