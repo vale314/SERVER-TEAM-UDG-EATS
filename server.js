@@ -2,7 +2,12 @@ const express = require("express");
 const app = express();
 const { connection } = require("./config/db");
 
-const server = require("http").createServer(app);
+const fs = require("fs");
+
+const key = fs.readFileSync("./ssl/key.pem");
+const cert = fs.readFileSync("./ssl/cert.pem");
+
+const server = require("https").createServer({ key: key, cert: cert }, app);
 
 connection();
 
@@ -11,7 +16,7 @@ app.use(express.json({ extended: false, limit: "5mb" }));
 
 // Define Routes
 app.use("/api/auth", require("./routes/auth"));
-app.use("/api/seller/", require("./routes/seller"));
+app.use("/api/seller", require("./routes/seller"));
 app.use("/api/users", require("./routes/users"));
 
 const PORT = process.env.PORT || 5000;

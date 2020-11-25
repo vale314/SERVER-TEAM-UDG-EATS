@@ -39,6 +39,7 @@ router.post(
     check("user_password", "Password is required").isLength({ min: 6 }),
   ],
   async (req, res) => {
+    console.log(email, user_password);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res
