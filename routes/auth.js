@@ -113,10 +113,6 @@ router.post(
       "Please enter a password with 6 or more characters"
     ).isLength({ min: 6 }),
     check("cellphone", "Please add telephone").not().isEmpty(),
-    check(
-      "code",
-      "Please enter a password with 6 or more characters"
-    ).isLength({ min: 9 }),
     check("image", "Please add name").not().isEmpty(),
   ],
   async (req, res) => {
