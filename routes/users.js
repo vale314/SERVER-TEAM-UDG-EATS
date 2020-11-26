@@ -132,6 +132,7 @@ router.post("/products", async (req, res) => {
       });
     })
     .catch((err) => {
+      console.log(err);
       if (err) {
         return res.json({ error: true, msg: "No se puede Enviar Productos" });
       }
