@@ -78,11 +78,11 @@ router.post(
           payload,
           config.get("jwtSecret"),
           {
-            expiresIn: 360000,
+            expiresIn: 3600000,
           },
           (err, token) => {
             if (err) throw err;
-            return res.json({ error: false, token, expires: 360000 });
+            return res.json({ error: false, token, expires: 3600000 });
           }
         );
       })
@@ -168,7 +168,12 @@ router.post(
           },
           (err, token) => {
             if (err) throw err;
-            return res.json({ error: false, token, expires: 360000 });
+            return res.json({
+              error: false,
+              localId: email,
+              token,
+              expires: 360000,
+            });
           }
         );
       })
