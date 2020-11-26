@@ -129,7 +129,6 @@ router.post(
       email,
       user_password,
       cellphone,
-      code,
       image,
     } = req.body;
 
@@ -143,7 +142,6 @@ router.post(
       email,
       user_password: pass_secure,
       cellphone,
-      code,
       image,
     };
 
