@@ -115,7 +115,7 @@ router.post(
 router.post("/products", async (req, res) => {
   new Promise(function (resolve, reject) {
     connection.query(
-      "SELECT * FROM `PRODUCT JOIN `SELLER` ON PRODUCT.ownerid = SELLER.email`",
+      "SELECT * FROM `PRODUCT` JOIN `SELLER` ON PRODUCT.ownerid = SELLER.email`",
       function (err, results, fields) {
         if (err) {
           reject(err);
