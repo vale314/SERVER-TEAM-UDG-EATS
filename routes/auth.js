@@ -112,6 +112,10 @@ router.post(
       "user_password",
       "Please enter a password with 6 or more characters"
     ).isLength({ min: 6 }),
+    check(
+      "code",
+      "Please enter a password with 6 or more characters"
+    ).isLength({ min: 9 }),
     check("cellphone", "Please add telephone").not().isEmpty(),
     check("image", "Please add name").not().isEmpty(),
   ],
@@ -129,6 +133,7 @@ router.post(
       email,
       user_password,
       cellphone,
+      code,
       image,
     } = req.body;
 
@@ -142,6 +147,7 @@ router.post(
       email,
       user_password: pass_secure,
       cellphone,
+      code,
       image,
     };
 
