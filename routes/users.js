@@ -120,6 +120,7 @@ router.post("/products", async (req, res) => {
         if (err) {
           reject(err);
         } else {
+          console.log(results);
           resolve(results);
         }
       }
