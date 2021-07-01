@@ -1,7 +1,7 @@
 {
   "jwtSecret": "secret",
   "CONFIG": {
-    "host": "34.122.73.46",
+    "host": "34.70.21.58",
     "user": "root",
     "password": "qpdkEJyBdysFkFBA",
     "database": "UDGTEAM"

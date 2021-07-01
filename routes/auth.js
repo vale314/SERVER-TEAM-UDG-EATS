@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+const router = express();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const config = require("config");
@@ -18,7 +18,6 @@ router.get("/", auth, async (req, res) => {
     const user = await User.findById(req.user.id).select("-password");
     res.json(user);
   } catch (err) {
-    console.error(err.message);
     res.status(500).send("Server Error");
   }
 });
@@ -117,20 +116,15 @@ router.post(
   ],
   async (req, res) => {
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
       return res
         .status(400)
         .json({ error: true, msg: "Campos Invalidos", errors: errors.array() });
     }
 
-    const {
-      firstname,
-      lastname,
-      email,
-      user_password,
-      cellphone,
-      image,
-    } = req.body;
+    const { firstname, lastname, email, user_password, cellphone, image } =
+      req.body;
 
     const salt = await bcrypt.genSalt(10);
 
@@ -173,7 +167,8 @@ router.post(
           },
           (err, token) => {
             if (err) throw err;
-            return res.json({
+
+            return res.status(200).json({
               error: false,
               localId: email,
               token,
@@ -184,10 +179,13 @@ router.post(
       })
       .catch((err) => {
         if (err) {
-          console.log(err);
           if (err.code == "ER_DUP_ENTRY")
-            return res.json({ error: true, msg: "Email Ya Existe" });
-          return res.json({ error: true, msg: "No se puede registrar" });
+            return res
+              .status(400)
+              .json({ error: true, msg: "Email Ya Existe" });
+          return res
+            .status(400)
+            .json({ error: true, msg: "No se puede registrar" });
         }
       });
   }
